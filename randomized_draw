@@ -1,0 +1,45 @@
+import random
+
+def create_draw(seeds):
+    # Initialize the bracket with 32 slots
+    bracket = [None] * 32
+    
+    # Place the 1st seed in the top spot and the 2nd seed in the bottom spot
+    bracket[0] = seeds[0]    # 1st seed in the top
+    bracket[-1] = seeds[1]    # 2nd seed in the bottom
+    
+    # Randomly place seeds 3 and 4 in the two middle spots (opposite sides of the draw)
+    middle_positions = [15, 16]
+    random.shuffle(middle_positions)
+    bracket[middle_positions[0]] = seeds[2]  # Seed 3
+    bracket[middle_positions[1]] = seeds[3]  # Seed 4
+
+    # Randomly assign seeds 5-8 to the remaining Round of 16 bye slots
+    bye_positions = [3, 7, 24, 28]
+    random.shuffle(bye_positions)
+    for i in range(4):
+        bracket[bye_positions[i]] = seeds[4 + i]  # Seeds 5-8
+
+    # Randomly assign seeds 9-16 against non-seeded players in the Round of 32
+    remaining_seed_positions = [1, 2, 4, 5, 6, 8, 9, 10, 22, 23, 25, 26, 27, 29, 30, 31]
+    random.shuffle(remaining_seed_positions)
+    for i in range(8, 16):
+        bracket[remaining_seed_positions[i - 8]] = seeds[i]  # Seeds 9-16
+
+    # Place the remaining players in any remaining empty slots
+    non_seeded_players = list(range(17, 25))  # Players 17-24
+    for i in range(len(bracket)):
+        if bracket[i] is None:
+            bracket[i] = non_seeded_players.pop(0)
+
+    return bracket
+
+# Define the list of seeds (players numbered 1 to 24, assuming they are seeded accordingly)
+seeds = list(range(1, 25))
+
+# Generate the draw
+draw = create_draw(seeds)
+
+# Display the draw
+for match in range(0, len(draw), 2):
+    print(f"Match {match // 2 + 1}: Player {draw[match]} vs Player {draw[match + 1]}")
